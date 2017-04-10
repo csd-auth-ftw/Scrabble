@@ -1,5 +1,7 @@
 import pygame
 import config
+import tile
+
 
 class Deck:
     def __init__(self, screen, x, y):
@@ -9,16 +11,24 @@ class Deck:
         self.x = x
         self.y = y
 
+    def init_deck(self):
+
+        for i in range(self.tiles_number):
+            left = self.x + (config.MARGIN + config.WIDTH) * i + config.MARGIN
+            top = self.y + config.MARGIN - 75
+            t = tile.Tile(self.screen, left, top, config.WIDTH, config.HEIGHT)
+            self.tiles.append(t)
+
     def render(self):
         # render background
         for i in range(self.tiles_number):
             left = self.x + (config.MARGIN + config.WIDTH) * i + config.MARGIN
-            top = self.y + config.MARGIN
+            top = self.y + config.MARGIN - 75
             pygame.draw.rect(self.screen, (0, 255, 0), [left, top, config.WIDTH, config.HEIGHT])
 
         # render tiles
         for t in self.tiles:
             if t is not None:
                 t.render()
-
         pass
+

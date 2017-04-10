@@ -1,6 +1,7 @@
 import pygame
 import sys
 import config
+from bag import Bag
 from controller import Controller
 
 
