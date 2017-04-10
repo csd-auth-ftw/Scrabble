@@ -10,7 +10,7 @@ def main():
     pygame.display.set_mode((config.SCREEN_W, config.SCREEN_H))
     pygame.display.set_caption("Scrabble")
     controller = Controller()
-    controller.start_screen()
+    controller.game_intro()
     pygame.quit()
     sys.exit()
 

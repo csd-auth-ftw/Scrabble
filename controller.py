@@ -2,9 +2,11 @@ import pygame
 
 import bag
 import board
+import button
 import deck
 import config
 import event_manager
+import sys
 
 
 class Controller(object):
@@ -21,6 +23,29 @@ class Controller(object):
         # set event handlers
         self.event_manager.on(pygame.MOUSEBUTTONDOWN, self.on_click_handler)
         self.event_manager.on_key_down(pygame.K_SPACE, self.on_press_space)
+
+    def game_intro(self):
+
+        done = False
+        screen = pygame.display.set_mode(config.WINDOW_SIZE)
+        menu_font = pygame.font.Font(None, 40)
+        options = [button.Button(screen, menu_font, "NEW GAME", (140, 105)),
+                   button.Button(screen, menu_font, "LOAD GAME", (135, 155)),
+                   button.Button(screen, menu_font, "OPTIONS", (145, 205))]
+
+        while not done:
+            done = self.event_manager.check()
+            screen.fill(config.WHITE)
+
+            for option in options:
+                if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    option.hovered = True
+                else:
+                    option.hovered = False
+                option.draw()
+
+            pygame.display.update()
+            self.clock.tick(60)
 
     def start_screen(self):
         self.board.init_grid()
@@ -51,6 +76,7 @@ class Controller(object):
             pygame.display.flip()
 
     def on_click_handler(self, event):
+
         # User clicks the mouse. Get the position
         pos = pygame.mouse.get_pos()
         # Change the x/y screen coordinates to grid coordinates
@@ -61,6 +87,8 @@ class Controller(object):
 
     def on_press_space(self, event):
 
+        if not self.deckA.tiles: return
+
         for i in range(self.deckA.tiles_number):
             deck_tile = self.deckA.tiles[i]
             letter, letter_value = self.bag.get_letter()
@@ -68,3 +96,7 @@ class Controller(object):
                 deck_tile.put_letter(letter, letter_value, 1)
             else:
                 deck_tile.empty()
+
+    def quit_game(self):
+        pygame.quit()
+        sys.exit()
