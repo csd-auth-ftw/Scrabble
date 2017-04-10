@@ -1,7 +1,9 @@
 import pygame
 
 import board
+import deck
 import config
+import event_manager
 
 
 class Controller(object):
@@ -9,8 +11,14 @@ class Controller(object):
         self.screen = pygame.display.get_surface()
         self.screen_rect = self.screen.get_rect()
         self.clock = pygame.time.Clock()
+        self.event_manager = event_manager.EventManager()
         self.font = pygame.font.Font(None, 24)
-        self.board = board.Board(15, 15)
+        self.board = board.Board(self.screen, 15, 15)
+        self.deckA = deck.Deck(self.screen, 100, 730)
+
+        # set event handlers
+        self.event_manager.on(pygame.MOUSEBUTTONDOWN, self.on_click_handler)
+        self.event_manager.on_key_down(pygame.K_SPACE, self.on_press_space)
 
     def start_screen(self):
         self.board.init_grid()
@@ -20,22 +28,17 @@ class Controller(object):
         done = False
         display_start_screen = True
 
-        while done == False and display_start_screen:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    done = True
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # User clicks the mouse. Get the position
-                    pos = pygame.mouse.get_pos()
-                    # Change the x/y screen coordinates to grid coordinates
-                    column = pos[0] // (config.WIDTH + config.MARGIN)
-                    row = pos[1] // (config.HEIGHT + config.MARGIN)
+        while not done and display_start_screen:
+            done = self.event_manager.check()
 
-                    print("Click ", pos, "Grid coordinates: ", row, column)
-
+            # clears the screen
             screen.fill(config.BLACK)
 
-            self.draw_grid(screen)
+            # draws the board
+            self.board.render()
+
+            # draws the decks
+            self.deckA.render()
 
             # Limit to 60 frames per second
             self.clock.tick(60)
@@ -43,15 +46,18 @@ class Controller(object):
             # Go ahead and update the screen with what we've drawn.
             pygame.display.flip()
 
-    def draw_grid(self, screen):
+    def on_click_handler(self, event):
+        # User clicks the mouse. Get the position
+        pos = pygame.mouse.get_pos()
+        # Change the x/y screen coordinates to grid coordinates
+        column = pos[0] // (config.WIDTH + config.MARGIN)
+        row = pos[1] // (config.HEIGHT + config.MARGIN)
 
-        # Draw the grid
-        for row in range(self.board.get_row()):
-            for column in range(self.board.get_row()):
-                color = config.WHITE
-                pygame.draw.rect(screen,
-                                 color,
-                                 [(config.MARGIN + config.WIDTH) * column + config.MARGIN,
-                                  (config.MARGIN + config.HEIGHT) * row + config.MARGIN,
-                                  config.WIDTH,
-                                  config.HEIGHT])
+        print("Click ", pos, "Grid coordinates: ", row, column)
+
+    def on_press_space(self, event):
+        t = self.board.grid[1][1]
+        if t.is_empty():
+            t.put_letter('A', 2, 1)
+        else:
+            t.empty()
