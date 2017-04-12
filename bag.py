@@ -5,6 +5,8 @@ class Bag:
     def __int__(self):
         self.collection = {}
 
+    def __str__(self):
+        return str(self.collection)
 
     def init_bag(self):
        self.collection = {
@@ -34,6 +36,8 @@ class Bag:
             'ψ': {'points': 10, 'count': 1},
             '?': {'points': 0, 'count': 2}  # einai ta leuka(mpalader)
         }
+
+
 
     def get_letter(self):
         if not self.collection: return 0

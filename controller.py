@@ -8,6 +8,8 @@ import config
 import event_manager
 import sys
 
+import player
+
 
 class Controller(object):
     def __init__(self):
@@ -17,7 +19,8 @@ class Controller(object):
         self.event_manager = event_manager.EventManager()
         self.font = pygame.font.Font(None, 24)
         self.board = board.Board(self.screen, 15, 15)
-        self.deckA = deck.Deck(self.screen, 100, 730)
+        # self.deckA = deck.Deck(self.screen, 100, 730)
+        self.playerA = player.Player('new player', self.screen, 100, 730)
         self.bag = bag.Bag()
 
         # set event handlers
@@ -49,8 +52,9 @@ class Controller(object):
 
     def start_screen(self):
         self.board.init_grid()
-        self.deckA.init_deck()
         self.bag.init_bag()
+        self.playerA.init_deck(self.bag)
+        self.play_sound(0)
 
         screen = pygame.display.set_mode(config.WINDOW_SIZE)
 
@@ -67,7 +71,7 @@ class Controller(object):
             self.board.render()
 
             # draws the decks
-            self.deckA.render()
+            self.playerA.render()
 
             # Limit to 60 frames per second
             self.clock.tick(60)
@@ -86,16 +90,21 @@ class Controller(object):
         print("Click ", pos, "Grid coordinates: ", row, column)
 
     def on_press_space(self, event):
+        self.play_sound(1)
+        self.playerA.pick_letter(self.bag)
 
-        if not self.deckA.tiles: return
+    def play_sound(self, type):
+        sounds = {
+            0: 'sounds\main.mp3',
+            1: 'sounds\sound_effect.mp3'
+        }
 
-        for i in range(self.deckA.tiles_number):
-            deck_tile = self.deckA.tiles[i]
-            letter, letter_value = self.bag.get_letter()
-            if deck_tile.is_empty():
-                deck_tile.put_letter(letter, letter_value, 1)
-            else:
-                deck_tile.empty()
+        if type == 0:
+            pygame.mixer.music.load(sounds.get(type))
+            pygame.mixer.music.play(-1)
+        else:
+            pygame.mixer.music.load(sounds.get(type))
+            pygame.mixer.music.play(1)
 
     def quit_game(self):
         pygame.quit()

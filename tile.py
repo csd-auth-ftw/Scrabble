@@ -22,6 +22,9 @@ class Tile:
     def move(self):
         pass
 
+    def get_letter(self):
+        return self.letter
+
     def empty(self):
         self.letter = None
         self.letter_value = None

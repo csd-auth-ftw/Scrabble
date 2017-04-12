@@ -12,12 +12,19 @@ class Deck:
         self.y = y
 
     def init_deck(self):
-
         for i in range(self.tiles_number):
             left = self.x + (config.MARGIN + config.WIDTH) * i + config.MARGIN
             top = self.y + config.MARGIN - 75
             t = tile.Tile(self.screen, left, top, config.WIDTH, config.HEIGHT)
             self.tiles.append(t)
+
+    def get_free_tile(self):
+        for i in range(self.tiles_number):
+            if self.tiles[i].is_empty():
+                return i
+        return -1
+
+
 
     def render(self):
         # render background
@@ -31,4 +38,3 @@ class Deck:
             if t is not None:
                 t.render()
         pass
-
