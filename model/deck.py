@@ -1,6 +1,7 @@
 import pygame
-import config
-import tile
+
+from model import tile
+from utils import config
 
 
 class Deck:

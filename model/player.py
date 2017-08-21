@@ -1,4 +1,4 @@
-import deck
+from model import deck
 
 
 class Player:

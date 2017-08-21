@@ -1,22 +1,18 @@
-import pygame
-
-import config
+from utils import config
 
 
 class Button:
     hovered = False
 
-    def __init__(self, screen, menu_font, text, pos):
+    def __init__(self, menu_font, text, pos):
         self.text = text
         self.pos = pos
-        self.screen = screen
         self.menu_font = menu_font
         self.set_rect()
-        self.draw()
 
-    def draw(self):
+    def draw(self, screen):
         self.set_rend()
-        self.screen.blit(self.rend, self.rect)
+        screen.blit(self.rend, self.rect)
 
     def set_rend(self):
         self.rend = self.menu_font.render(self.text, True, self.get_color())
@@ -31,3 +27,9 @@ class Button:
         self.set_rend()
         self.rect = self.rend.get_rect()
         self.rect.topleft = self.pos
+
+    def get_rect(self):
+        return self.rect
+
+    def get_text(self):
+        return self.text

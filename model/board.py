@@ -1,6 +1,7 @@
-import tile
-import config
 import pygame
+
+from model import tile
+from utils import config
 
 
 class Board:

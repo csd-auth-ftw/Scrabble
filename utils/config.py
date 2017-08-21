@@ -12,3 +12,11 @@ WIDTH = 40
 HEIGHT = 40
 
 MARGIN = 2
+
+
+
+#-----------------------------BUTTON NAMES-------------------------------------
+
+NEW_GAME = "NEW GAME"
+LOAD_GAME = "LOAD GAME"
+OPTIONS = "OPTIONS"
