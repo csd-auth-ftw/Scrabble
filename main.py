@@ -5,8 +5,6 @@ from view.pygame_view import PygameView
 
 
 def main():
-
-
     em = EventManager()
 
     pygame_view = PygameView(em)

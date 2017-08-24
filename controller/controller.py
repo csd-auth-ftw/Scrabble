@@ -2,20 +2,18 @@ from controller.events import TickEvent, QuitEvent
 
 
 class Controller(object):
-
     def __init__(self, event_manager):
         self.event_manager = event_manager
-        self.event_manager.RegisterListener(self)
+        self.event_manager.register(QuitEvent, self)
+
         self.running = True
 
     def Run(self):
         while self.running:
-            event = TickEvent()
-            self.event_manager.Post(event)
+            self.event_manager.post(TickEvent())
 
-    def Notify(self, event):
-        if isinstance(event, QuitEvent):
-            self.running = False
+    def on_quit(self, event):
+        self.running = False
 
     #
     # def on_click_handler(self, event):

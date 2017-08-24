@@ -4,31 +4,30 @@ from weakref import WeakKeyDictionary
 class EventManager:
     def __init__(self):
         self.listeners = WeakKeyDictionary()
-        self.button_listeners = {}
 
-    def RegisterButtonListener(self, button, listener):
-        self.button_listeners[button] = listener
+    def register(self, event, listener):
+        if event not in self.listeners:
+            self.listeners[event] = []
 
-    def RegisterListener(self, listener):
-        self.listeners[listener] = 1
+        self.listeners[event].append(listener)
 
-    def UnregisterButtonListener(self, button):
-        if button in self.button_listeners.keys():
-            del self.button_listeners[button]
+    def remove(self, event, listener = None):
+        if event not in self.listeners:
+            return
 
-    def UnregisterListener(self, listener):
-        if listener in self.listeners.keys():
-            del self.listeners[listener]
+        # delete all listeners for an event
+        if listener == None:
+            del self.listeners[event]
+            return
 
-    def PostButton(self, event):
-        for button_listener in self.button_listeners.keys():
-            button_listener.OnClick(event)
+        # delete a specific listener
+        self.listeners[event].remove(listener)
 
-    def Post(self, event):
-        for listener in self.listeners.keys():
-            listener.Notify(event)
+    def post(self, event):
+        if event.__class__ not in self.listeners:
+            return
 
-    def getButtonText(self, mouse_position):
-        for button in self.button_listeners:
-            if button.get_rect().collidepoint(mouse_position):
-                return button.get_text()
+        # copy listeners to avoid size change during loop
+        listeners = self.listeners[event.__class__][:]
+        for listener in listeners:
+            event.apply(listener)

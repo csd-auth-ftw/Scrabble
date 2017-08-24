@@ -25,8 +25,10 @@ class NewGame(View):
 
     def render(self):
         self.screen.fill(config.BLACK)
+
         # draws the board
         self.board.render()
+
         # draws the decks
         self.playerA.render()
 
