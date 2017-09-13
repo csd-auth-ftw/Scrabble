@@ -2,7 +2,7 @@ import random
 
 
 class Bag:
-    def __int__(self):
+    def __init__(self):
         self.collection = {}
         self.init_bag()
 
@@ -10,7 +10,7 @@ class Bag:
         return str(self.collection)
 
     def init_bag(self):
-       self.collection = {
+        self.collection = {
             'α': {'points': 1, 'count': 12},
             'ε': {'points': 1, 'count': 8},
             'η': {'points': 1, 'count': 7},
@@ -38,9 +38,7 @@ class Bag:
             '?': {'points': 0, 'count': 2}  # einai ta leuka(mpalader)
         }
 
-
-
-    def get_letter(self):
+    def get_char(self):
         if not self.collection: return 0
 
         letter, points = random.choice(list(self.collection.items()))
@@ -50,3 +48,4 @@ class Bag:
             self.collection.pop(letter)
 
         return letter, points['points']
+

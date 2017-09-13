@@ -2,6 +2,7 @@ import pygame
 
 from utilities import config
 from view import tile
+from view.tile import Tile
 from view.view import View
 from controller.events import ClickEvent, TilePickedEvent, TileRemovedEvent
 
@@ -26,8 +27,7 @@ class Deck(View):
             left = self.pos_x + (config.MARGIN + config.WIDTH) * i + config.MARGIN
             top = self.pos_y + config.MARGIN
             t = tile.Tile(self.screen, left, top, config.WIDTH, config.HEIGHT)
-            t.set_char('a')
-            self.tiles.append(t)
+            self.tiles.append(None)
 
     def on_tile_click(self, event):
         # check if hit any tile
@@ -66,8 +66,10 @@ class Deck(View):
 
         if pos == -1:
             return False
+        pos_x = self.pos_x + (config.MARGIN + config.WIDTH) * pos + config.MARGIN
+        pos_y = self.pos_y + config.MARGIN
 
-        self.tiles[pos] = character
+        self.tiles[pos] = Tile(pos_x, pos_y, config.WIDTH, config.HEIGHT, character[0], character[1])
         return True
 
     def render(self):

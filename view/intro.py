@@ -1,9 +1,9 @@
 import pygame
 
-from model.button import Button
-from utilities import config
-from view.view import View
 from controller.events import ClickEvent, NewGameEvent, LeaderBoardEvent
+from utilities import config
+from view.button import Button
+from view.view import View
 
 
 class Intro(View):

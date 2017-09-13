@@ -1,20 +1,22 @@
 import pygame
 
+from view.view import View
 
-class Tile:
-    def __init__(self, screen, x, y, width, height, char=None, margin=3):
-        self.screen = screen
+
+class Tile(View):
+    def __init__(self, x, y, width, height, char=None, value = -1, margin=3):
+        super().__init__()
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.char = char
-        self.char_value = 10 # TODO get char value
+        self.char_value = value
         self.margin = margin
 
-    def set_char(self, char):
+    def set_char(self, char = None, value = -1):
         self.char = char
-        self.char_value = 10 # TODO get char value
+        self.char_value = value # TODO get char value
 
     # TODO
     def move(self, pos_x, pos_y):
