@@ -1,42 +1,13 @@
 import random
+from utilities import config
 
 
 class Bag:
     def __init__(self):
-        self.collection = {}
-        self.init_bag()
+        self.collection = config.GREEK_CHAR_DICT
 
     def __str__(self):
         return str(self.collection)
-
-    def init_bag(self):
-        self.collection = {
-            'α': {'points': 1, 'count': 12},
-            'ε': {'points': 1, 'count': 8},
-            'η': {'points': 1, 'count': 7},
-            'ι': {'points': 1, 'count': 8},
-            'ν': {'points': 1, 'count': 6},
-            'ο': {'points': 1, 'count': 9},
-            'σ': {'points': 1, 'count': 7},
-            'τ': {'points': 1, 'count': 8},
-            'κ': {'points': 2, 'count': 4},
-            'π': {'points': 2, 'count': 4},
-            'ρ': {'points': 2, 'count': 5},
-            'υ': {'points': 2, 'count': 4},
-            'λ': {'points': 3, 'count': 3},
-            'μ': {'points': 3, 'count': 3},
-            'ω': {'points': 3, 'count': 3},
-            'γ': {'points': 4, 'count': 2},
-            'δ': {'points': 4, 'count': 2},
-            'β': {'points': 8, 'count': 1},
-            'φ': {'points': 8, 'count': 1},
-            'χ': {'points': 8, 'count': 1},
-            'ζ': {'points': 10, 'count': 1},
-            'θ': {'points': 10, 'count': 1},
-            'ξ': {'points': 10, 'count': 1},
-            'ψ': {'points': 10, 'count': 1},
-            '?': {'points': 0, 'count': 2}  # einai ta leuka(mpalader)
-        }
 
     def get_char(self):
         if not self.collection: return 0
@@ -49,3 +20,14 @@ class Bag:
 
         return letter, points['points']
 
+    @staticmethod
+    def count_score(word):
+        if isinstance(word, str):
+            word = list(word)
+
+        score = 0
+        for c in word:
+            c = c.upper()
+            score += config.GREEK_CHAR_DICT[c]['points']
+
+        return score

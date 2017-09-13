@@ -1,5 +1,10 @@
-from view import deck
+import itertools
+from utilities import config
+from model.bag import Bag
 
+CPU_MODE_MIN = 1
+CPU_MODE_MAX = 2
+CPU_MODE_SMART = 3
 
 class Player:
     def __init__(self, name):
@@ -31,3 +36,32 @@ class Player:
 
     def set_is_playing(self, state):
         self.is_playing = state
+
+    def cpu_play(self, characters, mode):
+        # make sure characters is an uppercase string
+        if isinstance(characters, list):
+            characters = "".join(characters)
+        characters = characters.upper()
+
+        wlens = range(2, 8)
+
+        if mode == CPU_MODE_MAX:
+            wlens = reversed(wlens)
+
+        selected = None
+        for l in wlens:
+            for word in itertools.permutations(characters, l):
+                # convert tupple to str
+                word = ''.join(word)
+
+                # check if valid word
+                if word in config.GREEK7_WORDS:
+                    score = Bag.count_score(word)
+
+                    if selected == None or selected[1] < score:
+                        selected = (word, score, l)
+
+                    if mode < CPU_MODE_SMART:
+                        return selected
+
+        return selected

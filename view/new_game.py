@@ -2,7 +2,7 @@ import pygame
 
 from controller.events import ClickEvent, TileRemovedEvent
 from model.bag import Bag
-from model.player import Player
+from model.player import Player, CPU_MODE_MIN, CPU_MODE_MAX, CPU_MODE_SMART
 from utilities import config
 from view.board import Board
 from view.button import Button
@@ -47,7 +47,8 @@ class NewGame(View):
         self.board.on_press_esc(event)
 
     def on_end_round_click(self, button, event):
-        pass
+        w = self.player_a.cpu_play("ΠΑΙΔΑΚΙ", CPU_MODE_SMART)
+        print(w)
 
     def on_backspace_click(self, button, event):
         self.board.on_press_backspace(event)
