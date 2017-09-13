@@ -1,7 +1,7 @@
 import pygame
 
 from controller.events import TickEvent, QuitEvent, ClickEvent, PressEvent
-from utils import config
+from utilities import config
 
 
 class PyGameController:

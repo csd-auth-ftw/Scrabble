@@ -19,6 +19,10 @@ class TickEvent(Event):
     def __init__(self):
         super().__init__("TickEvent", "on_tick")
 
+class LeaderBoardEvent(Event):
+    def __init__(self):
+        super().__init__("LeadBoardEvent","on_leader_board")
+
 class QuitEvent(Event):
     def __init__(self):
         super().__init__("QuitEvent", "on_quit")

@@ -1,15 +1,17 @@
 import pygame
 
-from model import tile
-from utils import config
+from utilities import config
+from view import tile
+from view.view import View
 
 
-class Board:
-    def __init__(self, screen, row=20, col=20):
+class Board(View):
+    def __init__(self, screen, row=1, col=20):
         self.screen = screen
         self.row = row
         self.col = col
         self.grid = []
+        self.init_grid()
 
     def init_grid(self):
         for x in range(self.row):
@@ -28,7 +30,7 @@ class Board:
                 pygame.draw.rect(self.screen,
                                  color,
                                  [(config.MARGIN + config.WIDTH) * column + config.MARGIN,
-                                  (config.MARGIN + config.HEIGHT) * row + config.MARGIN,
+                                  (config.MARGIN + config.HEIGHT) * row + config.MARGIN + 100,
                                   config.WIDTH,
                                   config.HEIGHT])
 

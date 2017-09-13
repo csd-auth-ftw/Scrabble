@@ -1,4 +1,4 @@
-from utils import config
+from utilities import config
 import pygame
 
 class Button:
@@ -33,7 +33,7 @@ class Button:
         if self.hovered:
             return config.GREEN
         else:
-            return config.BLACK
+            return config.RED
 
     def set_rect(self):
         self.set_rend()

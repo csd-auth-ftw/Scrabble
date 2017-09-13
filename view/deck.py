@@ -1,16 +1,19 @@
 import pygame
 
-from model import tile
-from utils import config
+from utilities import config
+from view import tile
+from view.view import View
 
 
-class Deck:
+class Deck(View):
     def __init__(self, screen, x, y):
+
         self.tiles = []
         self.tiles_number = 7
         self.screen = screen
         self.x = x
         self.y = y
+        self.init_deck()
 
     def init_deck(self):
         for i in range(self.tiles_number):
@@ -25,7 +28,14 @@ class Deck:
                 return i
         return -1
 
+    def append_character(self, character):
+        pos = self.get_free_tile()
 
+        if pos == -1:
+            return False
+
+        self.tiles[pos] = character
+        return True
 
     def render(self):
         # render background

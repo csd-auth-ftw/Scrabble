@@ -1,14 +1,12 @@
-from model import deck
+from view import deck
 
 
 class Player:
-    def __init__(self, name, screen, deck_pos_x, deck_pos_y):
+    def __init__(self, name):
         self.name = name
+        self.is_playing = False
         self.score = 0
-        self.deck = deck.Deck(screen, deck_pos_x, deck_pos_y)
-
-    def render(self):
-        self.deck.render()
+        self.words = []
 
     def set_name(self, name):
         self.name = name
@@ -16,26 +14,20 @@ class Player:
     def get_name(self):
         return self.name
 
-    def pick_letter(self, bag):
-        pos = self.deck.get_free_tile()
+    def set_score(self, score):
+        self.score = score
 
-        if pos > -1:
-            letter, letter_value = bag.get_letter()
-            self.deck.tiles[pos].put_letter(letter, letter_value, 1)
-        else:
-            print("Not enough space")
+    def get_score(self):
+        return self.score
 
-    def init_deck(self, bag):
-        self.deck.init_deck()
+    def append_word(self, word):
+        self.words.append(word)
 
-        # if not self.deck.tiles:
-        #     return
-        #
-        # for i in range(self.deck.tiles_number):
-        #     deck_tile = self.deck.tiles[i]
-        #     letter, letter_value = bag.get_letter()
-        #
-        #     if deck_tile.is_empty():
-        #         deck_tile.put_letter(letter, letter_value, 1)
-        #     else:
-        #         deck_tile.empty()
+    def get_word(self):
+        return self.words
+
+    def get_last_word(self):
+        return self.words[len(self.words) - 1] if len(self.words) > 0 else None
+
+    def set_is_playing(self, state):
+        self.is_playing = state

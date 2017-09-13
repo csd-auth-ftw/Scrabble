@@ -4,6 +4,7 @@ import random
 class Bag:
     def __int__(self):
         self.collection = {}
+        self.init_bag()
 
     def __str__(self):
         return str(self.collection)
