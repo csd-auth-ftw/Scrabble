@@ -19,9 +19,11 @@ class Tile(View):
         self.char_value = value # TODO get char value
 
     # TODO
-    def move(self, pos_x, pos_y):
+    def move(self, pos_x, pos_y, width=None, height=None):
         self.x = pos_x
         self.y = pos_y
+        self.width = width if not width == None else self.width
+        self.height = height if not height == None else self.height
 
     def get_char(self):
         return self.char

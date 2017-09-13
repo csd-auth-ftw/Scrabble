@@ -16,17 +16,16 @@ class Deck(View):
         self.tiles_number = tiles_number
         self.tiles = []
 
+        self.tile_width = config.DECK_TILE_WIDTH
+        self.tile_height = config.DECK_TILE_HEIGHT
+
         self.event_manager.register(ClickEvent, self.on_tile_click)
         self.event_manager.register(TileRemovedEvent, self)
 
         self.init_deck()
 
     def init_deck(self):
-        # todo remove and set to None
         for i in range(self.tiles_number):
-            left = self.pos_x + (config.MARGIN + config.WIDTH) * i + config.MARGIN
-            top = self.pos_y + config.MARGIN
-            t = tile.Tile(self.screen, left, top, config.WIDTH, config.HEIGHT)
             self.tiles.append(None)
 
     def on_tile_click(self, event):
@@ -49,9 +48,9 @@ class Deck(View):
         # insert to tiles list
         self.tiles[pos] = event.tile
 
-        pos_x = self.pos_x + (config.MARGIN + config.WIDTH) * pos + config.MARGIN
+        pos_x = self.pos_x + (config.MARGIN + self.tile_width) * pos + config.MARGIN
         pos_y = self.pos_y + config.MARGIN
-        event.tile.move(pos_x, pos_y)
+        event.tile.move(pos_x, pos_y, self.tile_width, self.tile_height)
 
     # returns the first free tile position
     def get_free_tile(self):
@@ -66,18 +65,18 @@ class Deck(View):
 
         if pos == -1:
             return False
-        pos_x = self.pos_x + (config.MARGIN + config.WIDTH) * pos + config.MARGIN
+        pos_x = self.pos_x + (config.MARGIN + self.tile_width) * pos + config.MARGIN
         pos_y = self.pos_y + config.MARGIN
 
-        self.tiles[pos] = Tile(pos_x, pos_y, config.WIDTH, config.HEIGHT, character[0], character[1])
+        self.tiles[pos] = Tile(pos_x, pos_y, self.tile_width, self.tile_height, character[0], character[1])
         return True
 
     def render(self):
         # render background
         for i in range(self.tiles_number):
-            left = self.pos_x + (config.MARGIN + config.WIDTH) * i + config.MARGIN
+            left = self.pos_x + (config.MARGIN + self.tile_width) * i + config.MARGIN
             top = self.pos_y + config.MARGIN
-            pygame.draw.rect(self.screen, (0, 255, 0), [left, top, config.WIDTH, config.HEIGHT])
+            pygame.draw.rect(self.screen, (0, 255, 0), [left, top, self.tile_width, self.tile_height])
 
         # render tiles
         for tile in self.tiles:

@@ -7,13 +7,15 @@ from controller.events import PressEvent, TilePickedEvent, TileRemovedEvent
 
 
 class Board(View):
-    def __init__(self, event_manager, pos_x, pos_y, rows=1, cols=20):
+    def __init__(self, event_manager, pos_x, pos_y, rows, cols):
         super().__init__(event_manager)
 
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.rows = rows
         self.cols = cols
+        self.tile_width = config.BOARD_TILE_WIDTH
+        self.tile_height = config.BOARD_TILE_HEIGHT
         self.tiles = [] # NxN for future usage
 
         self.event_manager.register(PressEvent, self)
@@ -56,9 +58,9 @@ class Board(View):
         self.tiles[0][col] = event.tile
 
         # set new tile position
-        pos_x = self.pos_x + (config.MARGIN + config.WIDTH) * col + config.MARGIN
+        pos_x = self.pos_x + (config.MARGIN + self.tile_width) * col + config.MARGIN
         pos_y = self.pos_y + config.MARGIN
-        event.tile.move(pos_x, pos_y)
+        event.tile.move(pos_x, pos_y, self.tile_width, self.tile_height)
 
     def on_press_backspace(self, event):
         tile = self.get_last_tile(0)
@@ -88,9 +90,9 @@ class Board(View):
         # render background
         for r in range(self.rows):
             for c in range(self.cols):
-                pos_x = self.pos_x + (config.MARGIN + config.WIDTH) * c + config.MARGIN
-                pos_y = self.pos_y + (config.MARGIN + config.HEIGHT) * r + config.MARGIN
-                pygame.draw.rect(self.screen, (0, 0, 255), [pos_x, pos_y, config.WIDTH, config.HEIGHT])
+                pos_x = self.pos_x + (config.MARGIN + self.tile_width) * c + config.MARGIN
+                pos_y = self.pos_y + (config.MARGIN + self.tile_height) * r + config.MARGIN
+                pygame.draw.rect(self.screen, (0, 0, 255), [pos_x, pos_y, self.tile_width, self.tile_height])
 
         # render tiles
         for x in range(self.rows):

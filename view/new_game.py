@@ -17,7 +17,7 @@ class NewGame(View):
 
         self.clock = pygame.time.Clock()
         self.button_font = pygame.font.SysFont("monospace", 24)
-        self.board = Board(self.event_manager, 100, 100, 1, 7)
+        self.board = Board(self.event_manager, 50, 100, 1, 7)
 
         self.options = [Button(self.button_font, config.END_ROUND, (235, 150), self.on_end_round_click),
                         Button(self.button_font, config.CLEAR, (150, 200), self.on_clear_click),
