@@ -8,8 +8,9 @@ from controller.events import ClickEvent, NewGameEvent, LeaderBoardEvent
 
 class Intro(View):
     def __init__(self, event_manager):
+        super().__init__(event_manager)
+
         # clear the screen first
-        self.event_manager = event_manager
         self.menu_font = pygame.font.SysFont("monospace", 40)
         self.options = [Button(self.menu_font, config.NEW_GAME, (50, 50), self.on_new_game_click),
                         Button(self.menu_font, config.LEADER_BOARD, (50, 100), self.on_leader_board_click),

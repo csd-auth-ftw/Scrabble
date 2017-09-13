@@ -3,13 +3,13 @@ from utilities import config
 
 
 class View:
-    #TODO
-    def __init__(self):
+    def __init__(self, event_manager=None):
         self.screen = pygame.display.get_surface()
         self.screen = pygame.display.set_mode(config.WINDOW_SIZE)
+        self.event_manager = event_manager
 
     def render(self):
-        print("render called")
+        pass
 
     def on_destroy(self):
-        print("on destroy")
+        pass

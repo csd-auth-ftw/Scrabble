@@ -31,6 +31,16 @@ class NewGameEvent(Event):
     def __init__(self):
         super().__init__("NewGameEvent", "on_new_game")
 
+class TilePickedEvent(Event):
+    def __init__(self, tile):
+        super().__init__("TilePickedEvent", "on_tile_picked")
+        self.tile = tile
+
+class TileRemovedEvent(Event):
+    def __init__(self, tile):
+        super().__init__("TileRemovedEvent", "on_tile_removed")
+        self.tile = tile
+
 class ClickEvent(Event):
     def __init__(self, pos = None):
         super().__init__("ClickEvent", "on_click")
@@ -59,11 +69,13 @@ class ClickEvent(Event):
 
 class PressEvent(Event):
     def __init__(self, keyCode):
-        super().__init__("PressEvent", "on_press")
+        super().__init__('PressEvent', 'on_press')
         self.keyCode = keyCode
         self.keyCodeNames = {
             32: "space",
-            13: "enter"
+            13: "enter",
+            8: "backspace",
+            27: "esc"
         }
 
     def apply(self, listener):
