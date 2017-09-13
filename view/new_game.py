@@ -1,11 +1,11 @@
 import pygame
 
-from controller.events import PressEvent, ClickEvent
-from utilities import config
+from controller.events import ClickEvent, TileRemovedEvent
 from model.bag import Bag
 from model.player import Player
-from model.button import Button
+from utilities import config
 from view.board import Board
+from view.button import Button
 from view.deck import Deck
 from view.score_board import ScoreBoard
 from view.view import View
@@ -19,8 +19,9 @@ class NewGame(View):
         self.button_font = pygame.font.SysFont("monospace", 24)
         self.board = Board(self.event_manager, 100, 100, 1, 7)
 
-        self.options = [Button(self.button_font, config.PICK_LETTER, (635, 105), self.on_pick_letter_click),
-                        Button(self.button_font, config.END_ROUND, (635, 155), self.on_end_round_click),
+        self.options = [Button(self.button_font, config.END_ROUND, (235, 150), self.on_end_round_click),
+                        Button(self.button_font, config.CLEAR, (150, 200), self.on_clear_click),
+                        Button(self.button_font, config.BACKSPACE, (350, 200), self.on_backspace_click)
                         ]
 
         # init players
@@ -37,23 +38,23 @@ class NewGame(View):
         self.score_board = ScoreBoard(self.player_a, self.player_b, 20, 20)
         self.deck = Deck(self.event_manager, 50, 350)
         self.bag = Bag()
+        self.set_deck()
 
         for option in self.options:
             self.event_manager.register(ClickEvent, option)
 
-
-    def on_pick_letter_click(self, button, event):
-        # TODO self.player_a.pick_letter(self.bag)
-        pass
+    def on_clear_click(self, button, event):
+        self.board.on_press_esc(event)
 
     def on_end_round_click(self, button, event):
-        print("end round")
+        pass
 
-    def on_press_space(self, event):
-        self.player_a.pick_letter(self.bag)
+    def on_backspace_click(self, button, event):
+        self.board.on_press_backspace(event)
 
-    def on_press_enter(self, event):
-        print("i pressed enter")
+    def set_deck(self):
+        for i in range(7):
+            self.deck.append_character(self.bag.get_char())
 
     def render(self):
         self.screen.fill(config.BLACK)
