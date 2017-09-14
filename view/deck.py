@@ -60,6 +60,15 @@ class Deck(View):
 
         return -1
 
+    def clear(self):
+        char = []
+        for i in range(self.tiles_number):
+            if not self.tiles[i] is None:
+                char.append(self.tiles[i].char)
+                self.tiles[i] = None
+
+        return char
+
     def append_character(self, character):
         pos = self.get_free_tile()
 

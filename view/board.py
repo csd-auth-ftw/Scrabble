@@ -2,6 +2,7 @@ import pygame
 
 from utilities import config
 from view import tile
+from view.tile import Tile
 from view.view import View
 from controller.events import PressEvent, TilePickedEvent, TileRemovedEvent
 
@@ -16,7 +17,7 @@ class Board(View):
         self.cols = cols
         self.tile_width = config.BOARD_TILE_WIDTH
         self.tile_height = config.BOARD_TILE_HEIGHT
-        self.tiles = [] # NxN for future usage
+        self.tiles = []  # NxN for future usage
 
         self.event_manager.register(PressEvent, self)
         self.event_manager.register(TilePickedEvent, self)
@@ -49,7 +50,6 @@ class Board(View):
             return (tile, c)
 
         return (None, -1)
-
 
     # called when a tile from the deck is picked
     def on_tile_picked(self, event):
@@ -99,6 +99,30 @@ class Board(View):
             for y in range(self.cols):
                 if not self.tiles[x][y] == None:
                     self.tiles[x][y].render()
+
+    def clear(self):
+        for x in range(self.rows):
+            for y in range(self.cols):
+                self.tiles[x][y] = None
+
+    def set_word(self, word):
+        for i in range(len(word)):
+            pos_x = self.pos_x + (config.MARGIN + self.tile_width) * i + config.MARGIN
+            pos_y = self.pos_y + config.MARGIN
+
+            self.tiles[0][i] = Tile(pos_x, pos_y, self.tile_width, self.tile_height, word[i], config.GREEK_CHAR_DICT[word[i]]['points'])
+
+
+    def get_word(self):
+        word = ''
+        score = 0
+        for x in range(self.rows):
+            for y in range(self.cols):
+                if not self.tiles[x][y] == None:
+                    word += self.tiles[x][y].char
+                    score += self.tiles[x][y].char_value
+
+        return (word, score)
 
     def get_tiles(self):
         return self.tiles

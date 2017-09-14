@@ -2,7 +2,7 @@ import pygame
 
 from controller.events import ClickEvent, TileRemovedEvent
 from model.bag import Bag
-from model.player import Player, CPU_MODE_MIN, CPU_MODE_MAX, CPU_MODE_SMART
+from model.player import Player, CPU_MODE_SMART
 from utilities import config
 from view.board import Board
 from view.button import Button
@@ -27,13 +27,10 @@ class NewGame(View):
         # init players
         self.player_a = Player('Player 1')
         self.player_b = Player('PC')
+        self.render_sleep = 0
 
         # todo remove
-        self.player_a.append_word('japan')
-        self.player_b.is_playing = True
-        self.player_a.set_score(1220)
-        self.player_b.append_word('nigeria')
-        self.player_a.set_score(890)
+        self.player_a.is_playing = True
 
         self.score_board = ScoreBoard(self.player_a, self.player_b, 20, 20)
         self.deck = Deck(self.event_manager, 50, 350)
@@ -47,15 +44,50 @@ class NewGame(View):
         self.board.on_press_esc(event)
 
     def on_end_round_click(self, button, event):
-        w = self.player_a.cpu_play("ΠΑΙΔΑΚΙ", CPU_MODE_SMART)
-        print(w)
+        self.play()
 
     def on_backspace_click(self, button, event):
         self.board.on_press_backspace(event)
 
     def set_deck(self):
-        for i in range(7):
+        for i in range(config.MAX_WORD_LEN):
             self.deck.append_character(self.bag.get_char())
+
+    def flip_players(self):
+        self.player_a.is_playing = not self.player_a.is_playing
+        self.player_b.is_playing = not self.player_b.is_playing
+
+    def play(self):
+        word, word_score = self.board.get_word()
+
+        # check user word and update score
+        if word in config.GREEK7_WORDS:
+            self.player_a.add_score(word_score)
+            self.player_a.append_word(word)
+
+        # clear deck and board
+        unused_chars = self.deck.clear()
+        self.bag.append_chars(unused_chars)
+        self.board.clear()
+
+        # computer turn
+        self.flip_players()
+
+        deck_cpu = []
+        for i in range(7):
+            deck_cpu.append(self.bag.get_char()[0])
+
+        word_cpu = self.player_a.cpu_play(deck_cpu, CPU_MODE_SMART)
+
+        if word_cpu is None:
+            # TODO alert user
+            pass
+        else:
+            self.player_b.append_word(word_cpu[0])
+            self.player_b.add_score(word_cpu[1])
+            self.board.set_word(word_cpu[0])
+
+        self.render_sleep = 1
 
     def render(self):
         self.screen.fill(config.BLACK)
@@ -79,6 +111,9 @@ class NewGame(View):
         # Go ahead and update the screen with what we've drawn.
         pygame.display.flip()
 
+        self.check_sleep()
+
+
     def on_destroy(self):
         print("destroy new_game view")
 
@@ -89,4 +124,14 @@ class NewGame(View):
 
         for option in self.options:
             self.event_manager.remove(ClickEvent, option)
-        
+
+    def check_sleep(self):
+        if self.render_sleep > 0:
+            self.render_sleep += 1
+
+            if self.render_sleep > 3:
+                pygame.time.wait(5000)
+                self.render_sleep = 0
+                self.board.clear()
+                self.flip_players()
+                self.set_deck()

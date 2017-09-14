@@ -46,6 +46,7 @@ GREEK_CHAR_DICT = {
     'Ξ': {'points': 10, 'count': 1},
     'Ψ': {'points': 10, 'count': 1}
 }
+MAX_WORD_LEN = 7
 
 # load words from greek7.txt
 GREEK7_WORDS = {}
