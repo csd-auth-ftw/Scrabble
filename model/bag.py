@@ -10,6 +10,9 @@ class Bag:
     def __str__(self):
         return str(self.collection)
 
+    def remaining_chars(self):
+        return len(self.collection)
+
     def init_char(self):
         for key in config.GREEK_CHAR_DICT.keys():
             char = config.GREEK_CHAR_DICT[key]
