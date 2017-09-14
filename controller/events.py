@@ -41,6 +41,11 @@ class TileRemovedEvent(Event):
         super().__init__("TileRemovedEvent", "on_tile_removed")
         self.tile = tile
 
+class MainMenuEvent(Event):
+    def __init__(self):
+        super().__init__("MainMenuEvent", "on_main_menu")
+
+
 class ClickEvent(Event):
     def __init__(self, pos = None):
         super().__init__("ClickEvent", "on_click")

@@ -1,9 +1,9 @@
 import pygame
 
-from controller.events import ClickEvent, TileRemovedEvent
+from controller.events import ClickEvent, TileRemovedEvent, MainMenuEvent
 from model.bag import Bag
 from model.player import Player, CPU_MODE_SMART
-from utilities import config
+from utilities import config, utils
 from view.board import Board
 from view.button import Button
 from view.deck import Deck
@@ -16,14 +16,19 @@ class NewGame(View):
     def __init__(self, event_manager):
         super().__init__(event_manager)
 
+        self.game_finished = False
+        self.playing = False
+        self.turn = 0
+
         self.clock = pygame.time.Clock()
         self.std_font = pygame.font.SysFont("sans-serif", 22)
         self.button_font = pygame.font.SysFont("monospace", 24)
+        self.button_font.set_bold(True)
         self.board = Board(self.event_manager, 50, 100, 1, 7)
 
-        self.options = [Button(self.button_font, config.END_ROUND, (235, 150), self.on_end_round_click),
-                        Button(self.button_font, config.CLEAR, (150, 200), self.on_clear_click),
-                        Button(self.button_font, config.BACKSPACE, (350, 200), self.on_backspace_click)
+        self.options = [Button(self.button_font, config.END_ROUND, (235, 200), self.on_end_round_click),
+                        Button(self.button_font, config.CLEAR, (150, 250), self.on_clear_click),
+                        Button(self.button_font, config.BACKSPACE, (350, 250), self.on_backspace_click)
                         ]
 
         # init players
@@ -46,25 +51,46 @@ class NewGame(View):
         self.board.on_press_esc(event)
 
     def on_end_round_click(self, button, event):
-        self.play()
+        if not self.playing:
+            self.play()
 
     def on_backspace_click(self, button, event):
         self.board.on_press_backspace(event)
 
+    def get_player(self):
+        return self.player_a if self.player_a.is_playing else self.player_b
+
     def set_deck(self):
-        if (self.bag.remaining_chars() < config.MAX_WORD_LEN):
-            return False
+        player = self.get_player()
+        deck = []
 
-        for i in range(config.MAX_WORD_LEN):
-            self.deck.append_character(self.bag.get_char())
+        if self.bag.remaining_chars() < config.MAX_WORD_LEN:
+            return None
 
-        return True
+        if len(player.unused_words) != config.MAX_WORD_LEN:
+            for i in range(len(player.unused_words)):
+                deck.append(player.unused_words[i])
+                self.deck.append_character(player.unused_words[i])
+        else:
+            for i in range(len(player.unused_words)):
+                self.bag.collection.append(player.unused_words[i])
+
+        while not self.deck.get_free_tile() == -1:
+            word = self.bag.get_char()
+            deck.append(word)
+            self.deck.append_character(word)
+
+        return deck
 
     def flip_players(self):
         self.player_a.is_playing = not self.player_a.is_playing
         self.player_b.is_playing = not self.player_b.is_playing
 
     def play(self):
+
+        self.playing = True
+        self.turn += 1
+
         word, word_score = self.board.get_word()
 
         # check user word and update score
@@ -73,54 +99,76 @@ class NewGame(View):
             self.player_a.append_word(word)
 
         # clear deck and board
-        unused_chars = self.deck.clear()
-        self.bag.append_chars(unused_chars)
+        self.player_a.unused_words = self.deck.clear()
         self.board.clear()
 
         # computer turn
         self.flip_players()
 
-        if (self.bag.remaining_chars() < config.MAX_WORD_LEN):
-            # TODO end game
-            print("END_GAME")
-            pass
+        if self.bag.remaining_chars() < config.MAX_WORD_LEN:
+            return self.end_game()
 
-        deck_cpu = []
-        for i in range(config.MAX_WORD_LEN):
-            deck_cpu.append(self.bag.get_char()[0])
-
+        deck_cpu = self.set_deck()
         # TODO add back to bag deck_cpu not used chars
-        word_cpu = self.player_a.cpu_play(deck_cpu, CPU_MODE_SMART)
+        word_cpu = self.player_a.cpu_play([i[0] for i in deck_cpu], CPU_MODE_SMART)
 
         if word_cpu is None:
-            # TODO alert user
-            pass
+           return self.end_game()
         else:
+            for i in range(len(word_cpu[0])):
+                for j in range(len(deck_cpu)):
+                    if deck_cpu[j][0] == word_cpu[0][i]:
+                        deck_cpu.pop(j)
+                        break
+
+            self.player_b.unused_words = deck_cpu
+
             self.player_b.append_word(word_cpu[0])
             self.player_b.add_score(word_cpu[1])
             self.board.set_word(word_cpu[0])
 
         self.render_sleep = 1
 
+    def end_game(self):
+        data = [self.player_a.score, self.player_b.score, self.turn]
+        utils.write_to_file(config.SCORES_PATH,data)
+        self.game_finished = True
+
+
     def render(self):
+
         # draw background
         self.render_background()
 
         # draws the score board
         self.score_board.render()
 
-        # draws the board
-        self.board.render()
+        if self.game_finished:
+            end_font = pygame.font.SysFont('sans-serif', 100)
+            end_font.set_bold(True)
+            winner = self.player_a.get_name() if self.player_a.score >= self.player_b.score else self.player_b.get_name()
+            rendered_message = end_font.render(winner + " WIN !", 1, config.WHITE)
+            self.screen.blit(rendered_message, (config.SCREEN_W / 2 - rendered_message.get_rect().width / 2, config.SCREEN_H / 2 - 20))
+            pygame.display.flip()
 
-        # draws the options
-        for option in self.options:
-            option.render(self.screen)
+            pygame.time.delay(3000)
+            self.event_manager.post(MainMenuEvent())
+        else:
+            # draws the board
+            self.board.render()
 
-        # draws the decks
-        self.deck.render()
+            # draws the options
+            for option in self.options:
+                option.render(self.screen)
 
-        # draws the number of remaining chars
-        self.render_remaining_chars()
+            # draws the decks
+            self.deck.render()
+
+            # draws the number of remaining chars
+            self.render_remaining_chars()
+
+            # checks if CPU is playing
+            self.check_sleep()
 
         # limit to 60 frames per second
         self.clock.tick(60)
@@ -128,8 +176,6 @@ class NewGame(View):
         # go ahead and update the screen with what we've drawn
         pygame.display.flip()
 
-        # checks if CPU is playing
-        self.check_sleep()
 
 
     def on_destroy(self):
@@ -147,15 +193,16 @@ class NewGame(View):
         if self.render_sleep > 0:
             self.render_sleep += 1
 
-            if self.render_sleep > 3:
-                pygame.time.delay(5000)
+            if self.render_sleep > 3 and not self.game_finished:
+                pygame.time.delay(1000)
                 self.render_sleep = 0
                 self.board.clear()
+                self.deck.clear()
                 self.flip_players()
+                self.playing = False
 
-                # TODO
-                if not self.set_deck():
-                    print("TODO END GAME")
+                if self.set_deck() is None:
+                    return self.end_game()
 
     def render_remaining_chars(self):
         rem_chars_render = self.std_font.render("remaining: " + str(self.bag.remaining_chars()), 1, (255, 255, 255))

@@ -2,7 +2,7 @@ import pickle
 import os.path
 
 def write_to_file(filename, data):
-    file = open(filename, "wb")
+    file = open(filename, "ab")
     pickle.dump(data, file)
     file.close()
 

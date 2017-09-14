@@ -42,7 +42,7 @@ class Button(View):
         if self.hovered:
             return config.GREEN
         else:
-            return config.RED
+            return config.BLACK
 
     def set_rect(self):
         self.set_rend()

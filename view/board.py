@@ -124,6 +124,10 @@ class Board(View):
 
         return (word, score)
 
+    def on_destroy(self):
+        self.event_manager.remove(PressEvent, self)
+        self.event_manager.remove(TilePickedEvent, self)
+
     def get_tiles(self):
         return self.tiles
 

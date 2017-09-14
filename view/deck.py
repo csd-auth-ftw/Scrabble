@@ -64,7 +64,7 @@ class Deck(View):
         char = []
         for i in range(self.tiles_number):
             if not self.tiles[i] is None:
-                char.append(self.tiles[i].char)
+                char.append((self.tiles[i].char,self.tiles[i].char_value))
                 self.tiles[i] = None
 
         return char
@@ -95,3 +95,4 @@ class Deck(View):
 
     def on_destroy(self):
         self.event_manager.remove(ClickEvent, self.on_tile_click)
+        self.event_manager.remove(TileRemovedEvent, self)

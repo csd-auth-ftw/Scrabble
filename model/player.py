@@ -6,12 +6,20 @@ CPU_MODE_MIN = 1
 CPU_MODE_MAX = 2
 CPU_MODE_SMART = 3
 
+
 class Player:
     def __init__(self, name):
         self.name = name
         self.is_playing = False
         self.score = 0
         self.words = []
+        self.unused_words = []
+
+    def set_unused_words(self, words):
+        self.unused_words = words
+
+    def get_unused_words(self):
+        return self.unused_words
 
     def set_name(self, name):
         self.name = name

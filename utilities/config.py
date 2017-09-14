@@ -57,6 +57,8 @@ with open(greek7_path, encoding="utf8") as rfile:
         # todo change
         GREEK7_WORDS[word] = 0
 
+SCORES_PATH = os.path.normpath(os.path.dirname(__file__) + "/../scores.txt")
+
 #-----------------------------BUTTON NAMES-------------------------------------
 
 NEW_GAME = "NEW GAME"
@@ -66,3 +68,4 @@ PICK_LETTER = "Pick letter"
 END_ROUND = "End round"
 CLEAR = "Clear"
 BACKSPACE = "Backspace"
+BACK = "Back"
